@@ -9,6 +9,7 @@ using namespace std;
 
 // space for current and extra books
 int NUMBER_OF_BOOKS = 20;
+static int new_index ;
 
 struct bookDetail {
 	int index;
@@ -63,6 +64,18 @@ void loadBook(ifstream& infile1, ifstream& infile2, bookDetail list[]) {
 	cout << "All movies are loaded" << endl << endl;
 	
 };
+string removespace(string in)
+{
+    string out;
+    for(unsigned int i = 0; i < in.size(); i++)
+	{
+	    if(in[i] != ' ')
+		{
+		    out += in[i];
+		}
+	}
+    return out;
+}
 
 void displayBook( bookDetail list[], int bookSize) {
     
@@ -144,17 +157,21 @@ void displayBook( bookDetail list[], int bookSize) {
 ////    cout << "It is "<< list[index].genre << " and was sold " << list[index].sales << "." << endl;
 //}
 void searchBook(bookDetail list[], string name) {
-    int index = 0;
+   bool found=0;
 	
     for (int count= 0; count < NUMBER_OF_BOOKS; count++ ) {
-        if (name == list[count].bookName){
-            index = count;
-            break;
+       if(removespace(name) == removespace(list[count].bookName)){
+            
+            new_index = count;
+            found=1;
         }
 	}
-	
-    cout << name <<" is published by "<< list[index].authorFullName << " and was released on "<< list[index].releaseDate << "."<<endl;
-    cout << "It is "<< list[index].genre << " and was sold "<< list[index].sales << "." << endl;
+	if(found){
+    cout << name <<" is published by "<< list[new_index].authorFullName << " and was released on "<< list[new_index].releaseDate << "."<<endl;
+    cout << "It is "<< list[new_index].genre << " and was sold "<< list[new_index].sales << "." << endl;
+    }
+    else 
+        cout << "The book cannot be found! "<<endl;
 }
 
 void addBook(bookDetail list[], int bookSize) {
@@ -215,7 +232,7 @@ int main() {
     cout << "[5] Menu" << endl;
     cout << "[6] Exit" << endl;
     cout << "========================================" << endl;
-	
+
     do {
         cout << "menu choice >> ";
 		
@@ -237,6 +254,9 @@ int main() {
                 cout << "Enter the book name you want to search : ";
                 getline(cin, book);
                 searchBook( datalist, book );
+                	
+                   
+                book.clear();
                 break;
 				
             case 3:
@@ -249,7 +269,7 @@ int main() {
 //                cout << "Enter the book name you want to add the book's income: ";
 //                getline(cin,book);
 //                updateBookIncome(book, datalist);
-//                break;
+                break;
 				
             case 5:
 				// go back to line 110 to re-display the menu
@@ -257,7 +277,9 @@ int main() {
 
                 break;
             case 6:
-				return 0;        
+				exit (0);
+                break;
+        
 		}
     } while ( userChoice >= 0 && userChoice <= 5 );
 
