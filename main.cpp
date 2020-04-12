@@ -7,10 +7,9 @@
 
 using namespace std;
 
-static int new_index ;
-
 // space for current and extra books
-int NUMBER_OF_BOOKS = 10;
+int NUMBER_OF_BOOKS = 20;
+static int new_index ;
 
 struct bookDetail {
 	int index;
@@ -26,8 +25,6 @@ struct bookDetail {
 	string sales;
 	string saleOutput;
 };
-
-
 
 void loadBook(ifstream& infile1, ifstream& infile2, bookDetail list[]) {
 	// for counting total numbers of books
@@ -64,9 +61,31 @@ void loadBook(ifstream& infile1, ifstream& infile2, bookDetail list[]) {
 		}
 	}
 	
-	cout << "10 books are loaded" << endl << endl;
+	cout << "All movies are loaded" << endl << endl;
 	
-};
+}
+
+ string allLower(string s){
+     string new_s;
+     for (int count = 0; count < s.size(); count ++){
+         new_s += tolower(s[count]);
+         
+     }
+     return new_s;
+ }
+
+string removespace(string in)
+{
+    string out;
+    for(unsigned int i = 0; i < in.size(); i++)
+	{
+	    if(in[i] != ' ')
+		{
+		    out += in[i];
+		}
+	}
+    return out;
+}
 
 void displayBook( bookDetail list[], int bookSize) {
     
@@ -93,29 +112,20 @@ void displayBook( bookDetail list[], int bookSize) {
 			"=============================================" << endl << endl;
 }
 
-string removespace(string in) {
-    string out;
-    for(unsigned int i = 0; i < in.size(); i++)
-	{
-	    if(in[i] != ' ')
-		{
-		    out += in[i];
-		}
-	}
-    return out;
-}
 
 void searchBook(bookDetail list[], string name) {
-	bool found = 0;
-	
+   bool found=0;
+	string new_name=allLower(name);
+    string new_bookName;
     for (int count= 0; count < NUMBER_OF_BOOKS; count++ ) {
-       if ( removespace(name) == removespace( list[count].bookName) ){
+        new_bookName = allLower(list[count].bookName);
+       if(removespace(new_name) == removespace(new_bookName)){
+            
             new_index = count;
-            found =1;
+            found=1;
         }
 	}
-	
-	if (found) {
+		if (found) {
 		cout << endl;	
 	
 		cout << setw(5) << left << " " << setw(35) << "Book Title" << setw(20) << "Author"
@@ -139,32 +149,52 @@ void searchBook(bookDetail list[], string name) {
 	}
 }
 
+
 void addBook(bookDetail list[], int bookSize) {
-	cin.ignore();
-	
-	cout << "Add new book " << endl;
+	int currentBookCount = bookSize;
+		
+	cout << "Add a new book " << endl << endl;
 	cout << "Name: ";
-	getline(cin, list[bookSize].bookName);
-	cout << list[10].bookName << endl;
-	cout << "Author Name: ";
-	getline(cin, list[bookSize].authorFullName);
-	cout << list[10].authorFullName<< endl;
+	getline(cin, list[currentBookCount].bookName);
+	cout << "Author: ";
+    cin.ignore();
+	getline(cin, list[currentBookCount].authorFullName);
+	cout << "Release Date: ";
+    cin.ignore();
+	getline(cin, list[currentBookCount].releaseDate);
+	cout << "Genre: ";
+    cin.ignore();
+	getline(cin, list[currentBookCount].genre);
+	cout << "Book sold: ";
+    cin.ignore();
+	getline(cin, list[currentBookCount].sales);
 	
+	currentBookCount++;
 }
 
 void updateBookIncome(string name, bookDetail list[]) {
-    long add_income;
+    string add_income;
+    bool isfound=0;
     int index;
+    string new_bookName;
+    string new_name=allLower(name);
     for (int count=0; count < NUMBER_OF_BOOKS; count++){
-        if (list[count].bookName == name){
+        new_bookName=allLower(list[count].bookName);
+        if (removespace(new_bookName) == removespace(new_name)){
             index=count;
+            isfound=1;
             break;
         }
     }
-    cout <<"How much mouney do you want to add to " << list[index].bookName << " ?\n";
-    cin >> add_income;
-    cout << "Old income: "<< list[index].sales << " and the new income is " << list[index].sales + add_income<< endl;
-    list[index].sales += add_income;
+    if(isfound){
+            cout <<"How much mouney do you want to add to " << list[index].bookName << " ?\n";
+            cin >> add_income;
+            cout << "Old income: "<< list[index].sales << " and the new income is " << add_income<< endl;
+            list[index].sales = add_income;
+    }
+    else {
+        cout << "Sorry the book you wanted to update the income is not found on the list"<<endl;
+    }
 
 
 }
@@ -192,7 +222,7 @@ int main() {
     cout << "[5] Menu" << endl;
     cout << "[6] Exit" << endl;
     cout << "========================================" << endl;
-	
+
     do {
         cout << "menu choice >> ";
 		
@@ -214,10 +244,13 @@ int main() {
                 cout << "Enter the book name you want to search : ";
                 getline(cin, book);
                 searchBook( datalist, book );
-				book.clear();
+                	
+                    cout << new_index;
+                book.clear();
                 break;
 				
             case 3:
+				cin.ignore();
                 addBook( datalist, NUMBER_OF_BOOKS);
                 break;
 				
@@ -234,7 +267,9 @@ int main() {
 
                 break;
             case 6:
-				exit(0);
+				exit (0);
+                break;
+        
 		}
     } while ( userChoice >= 0 && userChoice <= 5 );
 
